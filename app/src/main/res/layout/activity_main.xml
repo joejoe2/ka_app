@@ -80,17 +80,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.768" />
 
-    <ToggleButton
-        android:id="@+id/language"
-        android:layout_width="231dp"
-        android:layout_height="60dp"
-        android:text="ToggleButton"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.481" />
-
     <Button
         android:id="@+id/check"
         android:layout_width="0dp"
@@ -102,6 +91,33 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.303" />
+
+    <CheckBox
+        android:id="@+id/checkBox0"
+        android:layout_width="126dp"
+        android:layout_height="68dp"
+        android:layout_marginTop="37dp"
+        android:text="台語"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.14"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/check"
+        app:layout_constraintVertical_bias="0.016" />
+
+    <CheckBox
+        android:id="@+id/checkBox1"
+        android:layout_width="113dp"
+        android:layout_height="70dp"
+        android:text="中文"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.628"
+        app:layout_constraintStart_toEndOf="@+id/checkBox0"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.447" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
