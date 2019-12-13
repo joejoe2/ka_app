@@ -22,6 +22,7 @@ import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -51,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     Button singer_record;
     Button song_record;
     Button to_send;
+    CheckBox taiwanese;
+    CheckBox chinese;
     private final int REQ_CODE_SPEECH_INPUT=100;
     private  boolean busy;
     private File recordFile;
@@ -66,7 +69,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void initUI()
     {
-        lang=findViewById(R.id.language);
+        //lang=findViewById(R.id.language);
+        taiwanese=findViewById(R.id.checkBox0);
+        chinese=findViewById(R.id.checkBox1);
+        taiwanese.setChecked(true);
+        chinese.setChecked(false);
         singer=findViewById(R.id.singer);
         song=findViewById(R.id.song);
         singer_record=findViewById(R.id.singerbutton);
@@ -226,6 +233,34 @@ public class MainActivity extends AppCompatActivity {
                     nowlang=1;
                 }
                 else {
+                    nowlang=0;
+                }
+            }
+        });
+
+        taiwanese.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(taiwanese.isChecked()){
+                    chinese.setChecked(false);
+                    nowlang=0;
+                }
+                else {
+                    chinese.setChecked(true);
+                    nowlang=1;
+                }
+            }
+        });
+
+        chinese.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(chinese.isChecked()){
+                    taiwanese.setChecked(false);
+                    nowlang=1;
+                }
+                else {
+                    taiwanese.setChecked(true);
                     nowlang=0;
                 }
             }
