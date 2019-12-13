@@ -36,15 +36,20 @@ public class Result extends AppCompatActivity {
     ArrayList songlink=new ArrayList<String>();
     int mode;
 
+    String QUERY_SERVER="http://showdata.nctu.me:8080";
+
     void Start_to_send(){
         new Thread(new Runnable() {
             @Override
             public void run() {
+                song=song.trim();
+                singer=singer.trim();
+
                 try {
-                    if(singer.trim().equals("")){
+                    if(singer.equals("")){
                         send_to_url=send_to_url+"/search_song?song="+song+"&mode="+mode;
                     }
-                    else if(song.trim().equals("")){
+                    else if(song.equals("")){
                         send_to_url=send_to_url+"/search_singer?singer="+singer+"&mode="+mode;
                     }
                     else {
@@ -79,7 +84,7 @@ public class Result extends AppCompatActivity {
 
                     }
                     if(mode==1){
-                        send_to_url="http://showdata.nctu.me:8080";
+                        send_to_url=QUERY_SERVER;
                         if(singer.equals("")){
                             send_to_url=send_to_url+"/search_song?song="+song+"&mode="+2;
                         }
@@ -154,7 +159,7 @@ public class Result extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //id=position;
-                String ytblink="https://www.youtube.com/watch?v="+songlink.get(position);
+                String ytblink=""+songlink.get(position);
                 Intent intent=new Intent();
                 intent.setClass(Result.this,YoutubePlayActivity.class);
                 Bundle bundle=new Bundle();
@@ -171,7 +176,7 @@ public class Result extends AppCompatActivity {
             }
         });
 
-        send_to_url="http://showdata.nctu.me:8080";
+        send_to_url=QUERY_SERVER;
 
         Start_to_send();
     }
