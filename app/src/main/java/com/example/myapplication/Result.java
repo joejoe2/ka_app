@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -41,13 +42,36 @@ public class Result extends AppCompatActivity {
     String QUERY_SERVER="http://showdata.nctu.me:8080";
 
     void init_query_server(){
+        Thread t= new Thread(()->{
+            URL url = null;
+            try {
+                url = new URL("https://github.com/joejoe2/ka_app/blob/master/README.MD");
+                HttpURLConnection con = (HttpURLConnection)url.openConnection();
+                String str = InputStreamToString(con.getInputStream());
 
+                int s=str.indexOf("query host:");
+                str=str.substring(s);
+                QUERY_SERVER=str.substring(str.indexOf("\">")+2,str.indexOf("</a>"));
+                System.out.println(QUERY_SERVER);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        t.start();
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     void Start_to_send(){
         progressDialog=new ProgressDialog(this);
         progressDialog.setMessage("loading...");
         progressDialog.show();
+
+        init_query_server();
+
         new Thread(new Runnable() {
             @Override
             public void run() {
