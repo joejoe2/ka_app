@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -35,10 +36,14 @@ public class Result extends AppCompatActivity {
     ArrayList toshow = new ArrayList<String>();
     ArrayList songlink=new ArrayList<String>();
     int mode;
+    ProgressDialog progressDialog;
 
     String QUERY_SERVER="http://showdata.nctu.me:8080";
 
     void Start_to_send(){
+        progressDialog=new ProgressDialog(this);
+        progressDialog.setMessage("loading...");
+        progressDialog.show();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -125,8 +130,10 @@ public class Result extends AppCompatActivity {
                             list.setAdapter(adapter);
                         }
                     });
+                    progressDialog.dismiss();
                 } catch(Exception ex) {
                     System.out.println(ex);
+                    progressDialog.dismiss();
                 }
             }
         }).start();
