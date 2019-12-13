@@ -1,3 +1,3 @@
 query host:
 
-http://showdata.nctu.me:8080
+https://ka-service.herokuapp.com
