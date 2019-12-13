@@ -80,10 +80,10 @@ public class Result extends AppCompatActivity {
                     }
                     if(mode==1){
                         send_to_url="http://showdata.nctu.me:8080";
-                        if(singer==""){
+                        if(singer.equals("")){
                             send_to_url=send_to_url+"/search_song?song="+song+"&mode="+2;
                         }
-                        else if(song==""){
+                        else if(song.equals("")){
                             send_to_url=send_to_url+"/search_singer?singer="+singer+"&mode="+2;
                         }
                         else {
