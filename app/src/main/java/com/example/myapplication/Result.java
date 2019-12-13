@@ -40,6 +40,10 @@ public class Result extends AppCompatActivity {
 
     String QUERY_SERVER="http://showdata.nctu.me:8080";
 
+    void init_query_server(){
+
+    }
+
     void Start_to_send(){
         progressDialog=new ProgressDialog(this);
         progressDialog.setMessage("loading...");
