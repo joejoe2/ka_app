@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
                 singer.setText(msg.split("2.")[0].replace("1.",""));
             }
             else {
-                song.setText(msg);
+                song.setText(msg.split("2.")[0].replace("1.",""));
             }
         }
         busy=false;
