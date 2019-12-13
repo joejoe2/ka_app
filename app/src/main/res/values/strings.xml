@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">VoiceProcessing</string>
+    <string name="record">record</string>
+</resources>
