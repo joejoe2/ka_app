@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import org.json.JSONArray;
@@ -39,18 +40,31 @@ public class Result extends AppCompatActivity {
     int mode;
     ProgressDialog progressDialog;
 
-    String QUERY_SERVER="http://showdata.nctu.me:8080";
+    String QUERY_SERVER="https://ka-service.herokuapp.com";
+    String PREFS_NAME="ka";
 
     void init_query_server() throws Exception{
-
+        // Get from the SharedPreferences
+        SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+        if(settings.getBoolean("need_update", true)) {
             URL url = new URL("https://github.com/joejoe2/ka_app/blob/master/README.MD");
-            HttpURLConnection con = (HttpURLConnection)url.openConnection();
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
             String str = InputStreamToString(con.getInputStream());
 
-            int s=str.indexOf("query host:");
-            str=str.substring(s);
-            QUERY_SERVER=str.substring(str.indexOf("\">")+2,str.indexOf("</a>"));
+            int s = str.indexOf("query host:");
+            str = str.substring(s);
+            QUERY_SERVER = str.substring(str.indexOf("\">") + 2, str.indexOf("</a>"));
             System.out.println(QUERY_SERVER);
+
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean("need_update",false);
+            editor.putString("host",QUERY_SERVER);
+            // Apply the edits!
+            editor.apply();
+            editor.commit();
+        }else {
+            QUERY_SERVER=settings.getString("host",QUERY_SERVER);
+        }
 
     }
 
@@ -151,16 +165,32 @@ public class Result extends AppCompatActivity {
                             list.setAdapter(adapter);
                         }
                     });
+                    //
+                    SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putBoolean("need_update",false);
+                    editor.putString("host",QUERY_SERVER);
+                    // Apply the edits!
+                    editor.apply();
+                    editor.commit();
+                    //
                     progressDialog.dismiss();
                 } catch(Exception ex) {
                     System.out.println(ex);
+                    //
+                    SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putBoolean("need_update",true);
+                    // Apply the edits!
+                    editor.apply();
+                    editor.commit();
+                    //
                     progressDialog.dismiss();
                     runOnUiThread(new Runnable() {
                         public void run() {
                             Toast.makeText(getApplicationContext(),"網路錯誤",Toast.LENGTH_SHORT).show();
                         }
                     });
-
                 }
             }
         }).start();

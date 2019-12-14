@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     Button to_send;
     CheckBox taiwanese;
     CheckBox chinese;
+    ProgressDialog progressDialog;
     private final int REQ_CODE_SPEECH_INPUT=100;
     private  boolean busy;
     private File recordFile;
@@ -195,10 +197,14 @@ public class MainActivity extends AppCompatActivity {
     private void endTaiwaneseRecognition()
     {
         mediaRecorder.stop();
+        progressDialog=new ProgressDialog(MainActivity.this);
+        progressDialog.setMessage("loading...");
+        progressDialog.show();
         new TaiwaneseSender().execute(recordFile.getAbsolutePath(),"main");
     }
 
     private void pushResult(String msg,boolean success){
+        progressDialog.dismiss();
         if(success) {
             if(singer_or_song==0){
                 singer.setText(msg.split("2.")[0].replace("1.",""));
@@ -321,6 +327,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(String... param) {
+
+
             String model = param[1];
             String padding = new String(new char[8 - model.length()])
                     .replace("\0", "\u0000");
