@@ -102,16 +102,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     private void chineseSpeechInput(){
-        Intent intent=new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.TAIWAN.toString());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,"say something");
-        try {
-            startActivityForResult(intent,REQ_CODE_SPEECH_INPUT);
-        }
-        catch (ActivityNotFoundException e)
-        {
-            Toast.makeText(getApplicationContext(),"doesnt support",Toast.LENGTH_SHORT);
+        if(checkNetWork()){
+            Intent intent=new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.TAIWAN.toString());
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT,"say something");
+            try {
+                startActivityForResult(intent,REQ_CODE_SPEECH_INPUT);
+            }
+            catch (ActivityNotFoundException e)
+            {
+                Toast.makeText(getApplicationContext(),"doesnt support",Toast.LENGTH_SHORT).show();
+            }
         }
 
     }
@@ -138,53 +140,55 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void startTaiwaneseRecognition(){
-        try {
-            recordFile=File.createTempFile("record_temp",".m4a",getCacheDir());
-            mediaRecorder.setOutputFile(recordFile.getAbsolutePath());
-            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-            mediaRecorder.setAudioEncodingBitRate(326000);
-            mediaRecorder.setAudioSamplingRate(44100);
-            mediaRecorder.setAudioChannels(1);
-            mediaRecorder.prepare();
-            mediaRecorder.start();
-        }
-        catch (IOException e)
-        {
-            pushResult(e.getMessage(),false);
-            e.printStackTrace();
-        }
-
-        final Dialog dialog =new Dialog(this);
-        dialog.setContentView(R.layout.dialog_recording);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        dialog.setOnCancelListener(new Dialog.OnCancelListener(){
-            @Override
-            public void onCancel(DialogInterface dialog)
+        if(checkNetWork()){
+            try {
+                recordFile=File.createTempFile("record_temp",".m4a",getCacheDir());
+                mediaRecorder.setOutputFile(recordFile.getAbsolutePath());
+                mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+                mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+                mediaRecorder.setAudioEncodingBitRate(326000);
+                mediaRecorder.setAudioSamplingRate(44100);
+                mediaRecorder.setAudioChannels(1);
+                mediaRecorder.prepare();
+                mediaRecorder.start();
+            }
+            catch (IOException e)
             {
-                endTaiwaneseRecognition();
+                pushResult(e.getMessage(),false);
+                e.printStackTrace();
             }
-        });
 
-        ImageButton btnComplete=dialog.findViewById(R.id.btn_robot);
-        btnComplete.setOnClickListener(new Button.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                dialog.cancel();
-            }
-        });
+            final Dialog dialog =new Dialog(this);
+            dialog.setContentView(R.layout.dialog_recording);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        TextView textView=dialog.findViewById(R.id.text_dialogHint);
-        textView.setOnClickListener(new Button.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                dialog.cancel();
-            }
-        });
+            dialog.setOnCancelListener(new Dialog.OnCancelListener(){
+                @Override
+                public void onCancel(DialogInterface dialog)
+                {
+                    endTaiwaneseRecognition();
+                }
+            });
 
-        dialog.show();
+            ImageButton btnComplete=dialog.findViewById(R.id.btn_robot);
+            btnComplete.setOnClickListener(new Button.OnClickListener(){
+                @Override
+                public void onClick(View view){
+                    dialog.cancel();
+                }
+            });
+
+            TextView textView=dialog.findViewById(R.id.text_dialogHint);
+            textView.setOnClickListener(new Button.OnClickListener(){
+                @Override
+                public void onClick(View view){
+                    dialog.cancel();
+                }
+            });
+
+            dialog.show();
+        }
     }
 
 
@@ -272,20 +276,22 @@ public class MainActivity extends AppCompatActivity {
         to_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                song_to_send=song.getText().toString();
-                singer_to_send=singer.getText().toString();
-                if(song_to_send.equals("")!=true||singer_to_send.equals("")!=true){
-                    Intent intent=new Intent();
-                    intent.setClass(MainActivity.this,Result.class);
-                    Bundle bundle=new Bundle();
-                    bundle.putString("singer",singer_to_send);
-                    bundle.putString("song",song_to_send);
-                    bundle.putInt("nowlang",nowlang);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
-                else {
-                    Toast.makeText(getApplicationContext(),"輸入歌手或歌名",Toast.LENGTH_SHORT);
+                if(checkNetWork()){
+                    song_to_send=song.getText().toString();
+                    singer_to_send=singer.getText().toString();
+                    if(song_to_send.equals("")!=true||singer_to_send.equals("")!=true){
+                        Intent intent=new Intent();
+                        intent.setClass(MainActivity.this,Result.class);
+                        Bundle bundle=new Bundle();
+                        bundle.putString("singer",singer_to_send);
+                        bundle.putString("song",song_to_send);
+                        bundle.putInt("nowlang",nowlang);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(),"輸入歌手或歌名",Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
