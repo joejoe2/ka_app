@@ -42,7 +42,7 @@ public class Result extends AppCompatActivity {
     String QUERY_SERVER="http://showdata.nctu.me:8080";
 
     void init_query_server(){
-        Thread t= new Thread(()->{
+
             URL url = null;
             try {
                 url = new URL("https://github.com/joejoe2/ka_app/blob/master/README.MD");
@@ -56,13 +56,7 @@ public class Result extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        });
-        t.start();
-        try {
-            t.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
     }
 
     void Start_to_send(){
@@ -70,11 +64,14 @@ public class Result extends AppCompatActivity {
         progressDialog.setMessage("loading...");
         progressDialog.show();
 
-        init_query_server();
 
         new Thread(new Runnable() {
             @Override
             public void run() {
+
+                init_query_server();
+                send_to_url=QUERY_SERVER;
+
                 song=song.trim();
                 singer=singer.trim();
 
@@ -210,8 +207,6 @@ public class Result extends AppCompatActivity {
                 Result.this.finish();
             }
         });
-
-        send_to_url=QUERY_SERVER;
 
         Start_to_send();
     }
