@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -35,16 +37,49 @@ public class Result extends AppCompatActivity {
     ArrayList toshow = new ArrayList<String>();
     ArrayList songlink=new ArrayList<String>();
     int mode;
+    ProgressDialog progressDialog;
+
+    String QUERY_SERVER="http://showdata.nctu.me:8080";
+
+    void init_query_server(){
+
+            URL url = null;
+            try {
+                url = new URL("https://github.com/joejoe2/ka_app/blob/master/README.MD");
+                HttpURLConnection con = (HttpURLConnection)url.openConnection();
+                String str = InputStreamToString(con.getInputStream());
+
+                int s=str.indexOf("query host:");
+                str=str.substring(s);
+                QUERY_SERVER=str.substring(str.indexOf("\">")+2,str.indexOf("</a>"));
+                System.out.println(QUERY_SERVER);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+    }
 
     void Start_to_send(){
+        progressDialog=new ProgressDialog(this);
+        progressDialog.setMessage("loading...");
+        progressDialog.show();
+
+
         new Thread(new Runnable() {
             @Override
             public void run() {
+
+                init_query_server();
+                send_to_url=QUERY_SERVER;
+
+                song=song.trim();
+                singer=singer.trim();
+
                 try {
-                    if(singer.trim().equals("")){
+                    if(singer.equals("")){
                         send_to_url=send_to_url+"/search_song?song="+song+"&mode="+mode;
                     }
-                    else if(song.trim().equals("")){
+                    else if(song.equals("")){
                         send_to_url=send_to_url+"/search_singer?singer="+singer+"&mode="+mode;
                     }
                     else {
@@ -79,7 +114,7 @@ public class Result extends AppCompatActivity {
 
                     }
                     if(mode==1){
-                        send_to_url="http://showdata.nctu.me:8080";
+                        send_to_url=QUERY_SERVER;
                         if(singer.equals("")){
                             send_to_url=send_to_url+"/search_song?song="+song+"&mode="+2;
                         }
@@ -120,8 +155,10 @@ public class Result extends AppCompatActivity {
                             list.setAdapter(adapter);
                         }
                     });
+                    progressDialog.dismiss();
                 } catch(Exception ex) {
                     System.out.println(ex);
+                    progressDialog.dismiss();
                 }
             }
         }).start();
@@ -154,7 +191,7 @@ public class Result extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //id=position;
-                String ytblink="https://www.youtube.com/watch?v="+songlink.get(position);
+                String ytblink=""+songlink.get(position);
                 Intent intent=new Intent();
                 intent.setClass(Result.this,YoutubePlayActivity.class);
                 Bundle bundle=new Bundle();
@@ -170,8 +207,6 @@ public class Result extends AppCompatActivity {
                 Result.this.finish();
             }
         });
-
-        send_to_url="http://showdata.nctu.me:8080";
 
         Start_to_send();
     }

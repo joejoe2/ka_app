@@ -79,8 +79,7 @@ public class MainActivity extends AppCompatActivity {
         singer_record=findViewById(R.id.singerbutton);
         song_record=findViewById(R.id.songbutton);
         to_send=findViewById(R.id.check);
-        lang.setTextOff("台語");
-        lang.setTextOn("中文");
+
     }
 
     private void permissiononCheck(){
@@ -192,15 +191,16 @@ public class MainActivity extends AppCompatActivity {
     private void endTaiwaneseRecognition()
     {
         mediaRecorder.stop();
+        new TaiwaneseSender().execute(recordFile.getAbsolutePath(),"main");
     }
 
     private void pushResult(String msg,boolean success){
         if(success) {
             if(singer_or_song==0){
-                singer.setText(msg);
+                singer.setText(msg.split("2.")[0].replace("1.",""));
             }
             else {
-                song.setText(msg);
+                song.setText(msg.split("2.")[0].replace("1.",""));
             }
         }
         busy=false;
@@ -226,17 +226,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        lang.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    nowlang=1;
-                }
-                else {
-                    nowlang=0;
-                }
-            }
-        });
+
 
         taiwanese.setOnClickListener(new View.OnClickListener() {
             @Override
