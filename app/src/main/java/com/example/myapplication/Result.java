@@ -3,6 +3,7 @@ package com.example.myapplication;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -60,7 +61,7 @@ public class Result extends AppCompatActivity {
             editor.putBoolean("need_update",false);
             editor.putString("host",QUERY_SERVER);
             // Apply the edits!
-            editor.apply();
+
             editor.commit();
         }else {
             QUERY_SERVER=settings.getString("host",QUERY_SERVER);
@@ -171,7 +172,7 @@ public class Result extends AppCompatActivity {
                     editor.putBoolean("need_update",false);
                     editor.putString("host",QUERY_SERVER);
                     // Apply the edits!
-                    editor.apply();
+
                     editor.commit();
                     //
                     progressDialog.dismiss();
@@ -182,7 +183,7 @@ public class Result extends AppCompatActivity {
                     SharedPreferences.Editor editor = settings.edit();
                     editor.putBoolean("need_update",true);
                     // Apply the edits!
-                    editor.apply();
+                    
                     editor.commit();
                     //
                     progressDialog.dismiss();
