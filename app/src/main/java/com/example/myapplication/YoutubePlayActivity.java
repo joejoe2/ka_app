@@ -39,7 +39,7 @@ public class YoutubePlayActivity extends YouTubeBaseActivity{
 
             @Override
             public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-                Toast.makeText(getApplicationContext(),"Video Loading Failed",Toast.LENGTH_SHORT);
+                Toast.makeText(getApplicationContext(),"Video Loading Failed",Toast.LENGTH_SHORT).show();
             }
         });
     }
