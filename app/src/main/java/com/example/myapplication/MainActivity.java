@@ -206,6 +206,8 @@ public class MainActivity extends AppCompatActivity {
             else {
                 song.setText(msg.split("2.")[0].replace("1.",""));
             }
+        }else {
+            Toast.makeText(getApplicationContext(),"辨識失敗",Toast.LENGTH_SHORT).show();
         }
         busy=false;
     }
@@ -368,7 +370,7 @@ public class MainActivity extends AppCompatActivity {
                 message = new String(arrayOutput.toByteArray(), Charset.forName("UTF-8"));
 
                 return true;
-            } catch (IOException e) {
+            } catch (Exception e) {
                 message = e.getMessage();
                 Log.e(TAG, "doInBackground: ", e);
                 return false;
