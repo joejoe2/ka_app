@@ -1,3 +1,3 @@
 query host:
 
-https://testdockerres.azurewebsites.net
+https://ka-service.herokuapp.com
