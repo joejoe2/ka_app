@@ -113,7 +113,7 @@ public class Result extends AppCompatActivity {
                                 songlink.add(jsonObject.getString(2));
                                 songlimit++;
                             }
-                            if(songlimit<5){
+                            if(songlimit>5){
                                 break;
                             }
                         }

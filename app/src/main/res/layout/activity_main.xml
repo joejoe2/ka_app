@@ -8,8 +8,8 @@
 
     <Button
         android:id="@+id/singerbutton"
-        android:layout_width="159dp"
-        android:layout_height="108dp"
+        android:layout_width="142dp"
+        android:layout_height="150dp"
         android:text="念歌手名字"
         android:textSize="36sp"
         android:textStyle="bold"
@@ -38,6 +38,8 @@
         android:layout_width="53dp"
         android:layout_height="31dp"
         android:text="歌手"
+        android:textSize="24sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintEnd_toStartOf="@+id/song"
         app:layout_constraintStart_toStartOf="parent"
@@ -49,6 +51,8 @@
         android:layout_width="52dp"
         android:layout_height="32dp"
         android:text="歌名"
+        android:textSize="24sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/singer"
         app:layout_constraintHorizontal_bias="0.511"
@@ -86,9 +90,10 @@
 
     <Button
         android:id="@+id/check"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="403dp"
+        android:layout_height="68dp"
         android:text="查詢"
+        android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.517"
