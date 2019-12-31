@@ -93,27 +93,28 @@ public class Result extends AppCompatActivity {
                     System.out.println(str);
                     status = json.getString("status");
                     if(status.equals("success")){
+                        int songlimit=0;
                         JSONArray songlist=json.getJSONArray("content");
                         for(int i=0;i<songlist.length();i++){
                             JSONArray jsonObject = songlist.getJSONArray(i);
                             if(!jsonObject.getString(2).equals("NULL")){
                                 toshow.add(jsonObject.getString(0)+" "+jsonObject.getString(1));
                                 songlink.add(jsonObject.getString(2));
+                                songlimit++;
+                            }
+                            if(songlimit<5){
+                                break;
                             }
                         }
                     }
                     else {
-                        if(mode==0){
                             runOnUiThread(new Runnable() {
                                 public void run() {
                                     Toast.makeText(getApplicationContext(), "status="+status, Toast.LENGTH_SHORT).show();
                                 }
                             });
-
-                        }
-
                     }
-                    if(mode==1){
+                    /*if(mode==1){
                         send_to_url=QUERY_SERVER;
                         if(singer.equals("")){
                             send_to_url=send_to_url+"/search_song?song="+song+"&mode="+2;
@@ -147,11 +148,11 @@ public class Result extends AppCompatActivity {
                             });
                         }
 
-                    }
+                    }*/
 
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            ArrayAdapter adapter = new ArrayAdapter<String>(Result.this, android.R.layout.simple_list_item_1, toshow);
+                            ArrayAdapter adapter = new ArrayAdapter<String>(Result.this, R.layout.listitem, toshow);
                             list.setAdapter(adapter);
                         }
                     });
