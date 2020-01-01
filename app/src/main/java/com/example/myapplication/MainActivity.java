@@ -27,6 +27,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -56,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     CheckBox taiwanese;
     CheckBox chinese;
     ProgressDialog progressDialog;
+    ImageView mic1;
+    ImageView mic2;
     private final int REQ_CODE_SPEECH_INPUT=100;
     private  boolean busy;
     private File recordFile;
@@ -81,6 +84,10 @@ public class MainActivity extends AppCompatActivity {
         singer_record=findViewById(R.id.singerbutton);
         song_record=findViewById(R.id.songbutton);
         to_send=findViewById(R.id.check);
+        mic1=findViewById(R.id.imageView);
+        mic2=findViewById(R.id.imageView2);
+        mic1.bringToFront();
+        mic2.bringToFront();
 
     }
 

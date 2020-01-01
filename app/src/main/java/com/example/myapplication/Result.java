@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.util.Log;
@@ -35,6 +36,8 @@ public class Result extends AppCompatActivity {
     ListView list;
     String status;
     Button go_back_to_search;
+    ImageView man;
+    ImageView woman;
     //int id;
     ArrayList toshow = new ArrayList<String>();
     ArrayList songlink=new ArrayList<String>();
@@ -219,6 +222,10 @@ public class Result extends AppCompatActivity {
         song=bundle.getString("song");
         mode=bundle.getInt("nowlang");
 
+        man=findViewById(R.id.imageView3);
+        woman=findViewById(R.id.imageView4);
+        man.bringToFront();
+        woman.bringToFront();
         go_back_to_search=findViewById(R.id.back);
         list=findViewById(R.id.songlistview);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
