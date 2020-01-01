@@ -225,6 +225,16 @@ public class MainActivity extends AppCompatActivity {
         busy=false;
     }
 
+    void check(){
+        if(taiwanese.isChecked()){
+            chinese.setChecked(false);
+            nowlang=0;
+        }
+        else {
+            chinese.setChecked(true);
+            nowlang=1;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -250,14 +260,7 @@ public class MainActivity extends AppCompatActivity {
         taiwanese.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(taiwanese.isChecked()){
-                    chinese.setChecked(false);
-                    nowlang=0;
-                }
-                else {
-                    chinese.setChecked(true);
-                    nowlang=1;
-                }
+                check();
             }
         });
 
@@ -294,6 +297,7 @@ public class MainActivity extends AppCompatActivity {
                 if(checkNetWork()){
                     song_to_send=song.getText().toString();
                     singer_to_send=singer.getText().toString();
+                    check();
                     if(song_to_send.equals("")!=true||singer_to_send.equals("")!=true){
                         Intent intent=new Intent();
                         intent.setClass(MainActivity.this,Result.class);

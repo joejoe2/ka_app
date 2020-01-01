@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ItemText"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textSize="72px"
-    android:padding="32px"
     android:layout_margin="16px"
-    >
+    android:padding="32px"
+    android:textSize="72px">
 
 </TextView>
