@@ -1,4 +1,4 @@
-combine chinese and taiwanese tts to query songs and play in app
+combine chinese and taiwanese stt to query songs and play in app
 
 query sevice part:
 
