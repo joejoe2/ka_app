@@ -1,16 +1,9 @@
 package com.example.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,27 +11,29 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class Result extends AppCompatActivity {
+import androidx.appcompat.app.AppCompatActivity;
+
+public class QueryResultActivity extends AppCompatActivity {
 
     String singer="";
     String song="";
-    String send_to_url="";
     ListView list;
     String status;
-    Button go_back_to_search;
+    Button goBackButton;
     ImageView man;
     ImageView woman;
-    //int id;
     ArrayList toshow = new ArrayList<String>();
     ArrayList songlink=new ArrayList<String>();
     int mode;
@@ -86,7 +81,7 @@ public class Result extends AppCompatActivity {
 
                 try {
                     init_query_server();
-                    send_to_url=QUERY_SERVER;
+                    String send_to_url=QUERY_SERVER;
                     song=song.trim();
                     singer=singer.trim();
 
@@ -131,7 +126,7 @@ public class Result extends AppCompatActivity {
 
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            ArrayAdapter adapter = new ArrayAdapter<String>(Result.this, R.layout.listitem, toshow);
+                            ArrayAdapter adapter = new ArrayAdapter<String>(QueryResultActivity.this, R.layout.listitem, toshow);
                             list.setAdapter(adapter);
                         }
                     });
@@ -191,7 +186,7 @@ public class Result extends AppCompatActivity {
         woman=findViewById(R.id.imageView4);
         man.bringToFront();
         woman.bringToFront();
-        go_back_to_search=findViewById(R.id.back);
+        goBackButton =findViewById(R.id.back);
         list=findViewById(R.id.songlistview);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -199,7 +194,7 @@ public class Result extends AppCompatActivity {
                 //id=position;
                 String ytblink=""+songlink.get(position);
                 Intent intent=new Intent();
-                intent.setClass(Result.this,YoutubePlayActivity.class);
+                intent.setClass(QueryResultActivity.this, YoutubePlayerActivity.class);
                 Bundle bundle=new Bundle();
                 bundle.putString("link",ytblink);
                 intent.putExtras(bundle);
@@ -207,10 +202,10 @@ public class Result extends AppCompatActivity {
             }
         });
 
-        go_back_to_search.setOnClickListener(new View.OnClickListener() {
+        goBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Result.this.finish();
+                QueryResultActivity.this.finish();
             }
         });
 
