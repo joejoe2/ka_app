@@ -33,9 +33,9 @@ public class TaiwaneseRecognitionService extends AsyncTask<String, Void, Boolean
     // result message
     private String message;
 
-    private onCompleteCallable onCompleteCallable;
+    private OnCompleteCallable onCompleteCallable;
 
-    public TaiwaneseRecognitionService(onCompleteCallable callable) {
+    public TaiwaneseRecognitionService(OnCompleteCallable callable) {
         this.onCompleteCallable = callable;
     }
 

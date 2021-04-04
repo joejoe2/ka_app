@@ -12,12 +12,12 @@ import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 
 public class YoutubePlayerActivity extends YouTubeBaseActivity{
-    public static final String YOUTUBE_API_KEY ="AIzaSyCOaT31V6GC9WhLpjCe0f5zD7PUuyzDWWg";
-    String youtubeVideoLink;
-    Button goBackButton;
-    ImageView manImage;
-    ImageView womanImage;
-    YouTubePlayerView youtubePlayerView;
+    private static final String YOUTUBE_API_KEY ="AIzaSyCOaT31V6GC9WhLpjCe0f5zD7PUuyzDWWg";
+    private String youtubeVideoLink;
+    private Button goBackButton;
+    private ImageView manImage;
+    private ImageView womanImage;
+    private YouTubePlayerView youtubePlayerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -38,8 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox taiwaneseOption;
     private CheckBox chineseOption;
     private ProgressDialog loadingProgressDialog;
-    private ImageView microphoneImage1;
-    private ImageView microphoneImage2;
     //tool
     private File recordFile;
     private MediaRecorder soundRecorder;
@@ -47,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
     private final int REQ_CODE_SPEECH_INPUT=100;
     private Language languageMode=Language.Chinese;
     private boolean isInputForSinger;
-    private String singerToSend="";
-    private String songToSend="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,15 +58,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         taiwaneseOption =findViewById(R.id.checkBox0);
         chineseOption =findViewById(R.id.checkBox1);
-        taiwaneseOption.setChecked(true);
-        chineseOption.setChecked(false);
+        taiwaneseOption.setChecked(false);
+        chineseOption.setChecked(true);
         singer=findViewById(R.id.singer);
         song=findViewById(R.id.song);
         singerRecordButton =findViewById(R.id.singerbutton);
         songRecordButton =findViewById(R.id.songbutton);
         queryButton =findViewById(R.id.check);
-        microphoneImage1 =findViewById(R.id.imageView);
-        microphoneImage2 =findViewById(R.id.imageView2);
+        ImageView microphoneImage1 = findViewById(R.id.imageView);
+        ImageView microphoneImage2 = findViewById(R.id.imageView2);
         microphoneImage1.bringToFront();
         microphoneImage2.bringToFront();
     }
@@ -87,14 +83,14 @@ public class MainActivity extends AppCompatActivity {
         taiwaneseOption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                constrainOptions(Language.Taiwanese);
+                setLanguageOption(Language.Taiwanese);
             }
         });
 
         chineseOption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                constrainOptions(Language.Chinese);
+                setLanguageOption(Language.Chinese);
             }
         });
 
@@ -149,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void constrainOptions(Language languageOption){
+    private void setLanguageOption(Language languageOption){
         if(languageOption.equals(Language.Taiwanese)){
             taiwaneseOption.setChecked(true);
             chineseOption.setChecked(false);
@@ -164,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void startChineseRecognition(){
         if(hasNetWork()){
+            //use google ChineseRecognition service
             Intent intent=new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.TAIWAN.toString());
@@ -173,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
             }
             catch (ActivityNotFoundException e)
             {
-                Toast.makeText(getApplicationContext(),"does not support !",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"本裝置不支援語音辨識",Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -181,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode,int resultCode,Intent data){
         super.onActivityResult(requestCode,resultCode,data);
+        //on receive ChineseRecognition result
         switch (requestCode){
             case REQ_CODE_SPEECH_INPUT:
             {
@@ -201,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void startTaiwaneseRecognition(){
         if(hasNetWork()){
+            //start recording
             try {
                 recordFile=File.createTempFile("record_temp",".m4a", getCacheDir());
                 soundRecorder = SoundRecorderFactory.generate(recordFile);
@@ -209,11 +208,11 @@ public class MainActivity extends AppCompatActivity {
             }
             catch (IOException e)
             {
-                pushResultToEditText(e.getMessage(),false);
+                Toast.makeText(getApplicationContext(),"辨識失敗",Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
-
-            final Dialog waitingTaiwaneseRecognitionDialog =new WaitingTaiwaneseRecognitionDialog(this);
+            //show waiting dialog for end recording
+            Dialog waitingTaiwaneseRecognitionDialog =new WaitingTaiwaneseRecognitionDialog(this);
             waitingTaiwaneseRecognitionDialog.setOnCancelListener(new Dialog.OnCancelListener(){
                 @Override
                 public void onCancel(DialogInterface dialog)
@@ -227,35 +226,30 @@ public class MainActivity extends AppCompatActivity {
 
     private void endTaiwaneseRecognition()
     {
+        //stop recording and show the loadingProgressDialog before taiwaneseRecognitionService complete
         soundRecorder.stop();
         loadingProgressDialog =new ProgressDialog(MainActivity.this);
         loadingProgressDialog.setMessage("loading...");
         loadingProgressDialog.show();
-        new TaiwaneseRecognitionService(new onCompleteCallable() {
+        TaiwaneseRecognitionService taiwaneseRecognitionService=new TaiwaneseRecognitionService(new OnCompleteCallable() {
             @Override
             public void call(String msg, boolean success) {
-                pushResultToEditText(msg, success);
-            }
-        }).execute(recordFile.getAbsolutePath(),"main");
-    }
-
-    private void pushResultToEditText(String msg, boolean success){
-        MainActivity.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                loadingProgressDialog.dismiss();
-                if (success) {
-                    if(isInputForSinger){
-                        singer.setText(msg.split("2.")[0].replace("1.",""));
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadingProgressDialog.dismiss();
+                        if (success) {
+                            String res=msg.split("2.")[0].replace("1.","");
+                            if(isInputForSinger) singer.setText(res);
+                            else song.setText(res);
+                        } else {
+                            Toast.makeText(getApplicationContext(),"辨識失敗",Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    else {
-                        song.setText(msg.split("2.")[0].replace("1.",""));
-                    }
-                } else {
-                    Toast.makeText(getApplicationContext(),"辨識失敗",Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
+        taiwaneseRecognitionService.execute(recordFile.getAbsolutePath(),"main");
     }
 
     private boolean hasNetWork(){

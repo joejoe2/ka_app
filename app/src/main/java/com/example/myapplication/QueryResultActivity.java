@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -21,178 +21,60 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class QueryResultActivity extends AppCompatActivity {
-
-    String singer="";
-    String song="";
-    ListView list;
-    String status;
-    Button goBackButton;
-    ImageView man;
-    ImageView woman;
-    ArrayList toshow = new ArrayList<String>();
-    ArrayList songlink=new ArrayList<String>();
-    int mode;
-    ProgressDialog progressDialog;
-
-    String QUERY_SERVER="https://ka-service.herokuapp.com";
-    String PREFS_NAME="ka";
-
-    void init_query_server() throws Exception{
-        // Get from the SharedPreferences
-        SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
-        if(settings.getBoolean("need_update", true)) {
-            URL url = new URL("https://github.com/joejoe2/ka_app/blob/master/README.MD");
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            String str = InputStreamToString(con.getInputStream());
-
-            int s = str.indexOf("query host:");
-            str = str.substring(s);
-            QUERY_SERVER = str.substring(str.indexOf("\">") + 2, str.indexOf("</a>"));
-            System.out.println(QUERY_SERVER);
-
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean("need_update",false);
-            editor.putString("host",QUERY_SERVER);
-            // Apply the edits!
-
-            editor.commit();
-        }else {
-            QUERY_SERVER=settings.getString("host",QUERY_SERVER);
-        }
-
-    }
-
-    void Start_to_send(){
-        progressDialog=new ProgressDialog(this);
-        progressDialog.setMessage("loading...");
-        progressDialog.show();
-
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-
-
-                try {
-                    init_query_server();
-                    String send_to_url=QUERY_SERVER;
-                    song=song.trim();
-                    singer=singer.trim();
-
-                    if(singer.equals("")){
-                        send_to_url=send_to_url+"/search_song?song="+song+"&mode="+mode;
-                    }
-                    else if(song.equals("")){
-                        send_to_url=send_to_url+"/search_singer?singer="+singer+"&mode="+mode;
-                    }
-                    else {
-                        send_to_url=send_to_url+"/search_singer_and_song?singer="+singer+"&song="+song+"&mode="+mode;
-                    }
-                    URL url = new URL(send_to_url);
-                    HttpURLConnection con = (HttpURLConnection)url.openConnection();
-                    String str = InputStreamToString(con.getInputStream());
-
-                    JSONObject json = new JSONObject(str);
-                    System.out.println(str);
-                    status = json.getString("status");
-                    if(status.equals("success")){
-                        int songlimit=0;
-                        JSONArray songlist=json.getJSONArray("content");
-                        for(int i=0;i<songlist.length();i++){
-                            JSONArray jsonObject = songlist.getJSONArray(i);
-                            if(!jsonObject.getString(2).equals("NULL")){
-                                toshow.add(jsonObject.getString(0)+" "+jsonObject.getString(1));
-                                songlink.add(jsonObject.getString(2));
-                                songlimit++;
-                            }
-                            if(songlimit>5){
-                                break;
-                            }
-                        }
-                    }
-                    else {
-                            runOnUiThread(new Runnable() {
-                                public void run() {
-                                    Toast.makeText(getApplicationContext(), "status="+status, Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                    }
-
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            ArrayAdapter adapter = new ArrayAdapter<String>(QueryResultActivity.this, R.layout.listitem, toshow);
-                            list.setAdapter(adapter);
-                        }
-                    });
-                    //
-                    SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
-                    SharedPreferences.Editor editor = settings.edit();
-                    editor.putBoolean("need_update",false);
-                    editor.putString("host",QUERY_SERVER);
-                    // Apply the edits!
-
-                    editor.commit();
-                    //
-                    progressDialog.dismiss();
-                } catch(Exception ex) {
-                    System.out.println(ex);
-                    //
-                    SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
-                    SharedPreferences.Editor editor = settings.edit();
-                    editor.putBoolean("need_update",true);
-                    // Apply the edits!
-                    
-                    editor.commit();
-                    //
-                    progressDialog.dismiss();
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            Toast.makeText(getApplicationContext(),"網路錯誤",Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            }
-        }).start();
-    }
-
-    static String InputStreamToString(InputStream is) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = br.readLine()) != null) {
-            sb.append(line);
-        }
-        br.close();
-        is.close();
-        return sb.toString();
-    }
+    //ui
+    private Button goBackButton;
+    private ProgressDialog loadingProgressDialog;
+    //flag and data
+    private String singer="";
+    private String song="";
+    private ListView listView;
+    private KaSongs songs;
+    private int languageMode;
+    private static String QUERY_SERVER ="https://ka-service.herokuapp.com";
+    private static final String DEFAULT_REPO="https://github.com/joejoe2/ka_app/blob/master/README.MD";
+    private static final String PREFS_NAME="ka";
+    SharedPreferences setting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_result);
+        getSetting();
+        getBundle();
+        initUI();
+        setListener();
+        sendQueryRequest();
+    }
+
+    private void getSetting(){
+        setting = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+    }
+
+    private void getBundle(){
         Bundle bundle=this.getIntent().getExtras();
         singer=bundle.getString("singer");
         song=bundle.getString("song");
-        mode=bundle.getInt("nowlang");
+        languageMode =bundle.getInt("nowlang");
+    }
 
-        man=findViewById(R.id.imageView3);
-        woman=findViewById(R.id.imageView4);
+    private void initUI() {
+        setContentView(R.layout.activity_result);
+        ImageView man=findViewById(R.id.imageView3);
+        ImageView woman=findViewById(R.id.imageView4);
         man.bringToFront();
         woman.bringToFront();
         goBackButton =findViewById(R.id.back);
-        list=findViewById(R.id.songlistview);
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView =findViewById(R.id.songlistview);
+    }
+
+    private void setListener(){
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //id=position;
-                String ytblink=""+songlink.get(position);
+                String ytblink=songs.getSongLinks().get(position);
                 Intent intent=new Intent();
                 intent.setClass(QueryResultActivity.this, YoutubePlayerActivity.class);
                 Bundle bundle=new Bundle();
@@ -208,7 +90,115 @@ public class QueryResultActivity extends AppCompatActivity {
                 QueryResultActivity.this.finish();
             }
         });
+    }
 
-        Start_to_send();
+    private void sendQueryRequest(){
+        loadingProgressDialog =new ProgressDialog(this);
+        loadingProgressDialog.setMessage("loading...");
+        loadingProgressDialog.show();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                    prepareQueryServer();
+                    KaService kaService=new KaService(QUERY_SERVER, singer, song, languageMode, new OnCompleteCallable(){
+                        @Override
+                        public void call(String msg, boolean success) {
+                            if (success){
+                                handleQueryResult(msg);
+                                showQueryResult();
+                                updateValidQueryServerSetting();
+                            }else {
+                                handleQueryConnectionError();
+                            }
+                            loadingProgressDialog.dismiss();
+                        }
+                    });
+                    kaService.execute();
+            }
+        }).start();
+    }
+
+    private void prepareQueryServer() {
+        try {
+            if (setting.getBoolean("need_update", true)) {
+                QUERY_SERVER = getNewQueryServerFromRepo();
+                SharedPreferences.Editor editor = setting.edit();
+                editor.putBoolean("need_update", false);
+                editor.putString("host", QUERY_SERVER);
+                editor.commit();
+            } else {
+                QUERY_SERVER = setting.getString("host", QUERY_SERVER);
+            }
+        } catch (IOException ex) {
+            SharedPreferences.Editor editor = setting.edit();
+            editor.putBoolean("need_update", true);
+            editor.commit();
+            loadingProgressDialog.dismiss();
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(getApplicationContext(), "網路錯誤", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    private String getNewQueryServerFromRepo() throws IOException {
+        URL url = new URL(DEFAULT_REPO);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        String str = InputStreamToString(con.getInputStream());
+
+        int s = str.indexOf("query host:");
+        str = str.substring(s);
+        return str.substring(str.indexOf("\">") + 2, str.indexOf("</a>"));
+    }
+
+    private String InputStreamToString(InputStream is) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = br.readLine()) != null) {
+            sb.append(line);
+        }
+        br.close();
+        is.close();
+        return sb.toString();
+    }
+
+    private void updateValidQueryServerSetting(){
+        setting = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = setting.edit();
+        editor.putBoolean("need_update", false);
+        editor.putString("host", QUERY_SERVER);
+        editor.commit();
+    }
+
+    private void handleQueryResult(String result){
+        try {
+            KaResponse kaResponse=new KaResponse(result);
+            songs=kaResponse.getSongs();
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void showQueryResult(){
+        runOnUiThread(new Runnable() {
+            public void run() {
+                ArrayAdapter adapter = new ArrayAdapter<String>(QueryResultActivity.this, R.layout.listitem, songs.getValidSongs());
+                listView.setAdapter(adapter);
+            }
+        });
+    }
+
+    private void handleQueryConnectionError(){
+        runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(getApplicationContext(), "網路錯誤", Toast.LENGTH_SHORT).show();
+            }
+        });
+        setting = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = setting.edit();
+        editor.putBoolean("need_update", true);
+        editor.commit();
     }
 }
