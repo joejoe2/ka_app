@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -22,6 +22,13 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.example.myapplication.util.Language;
+import com.example.myapplication.util.OnCompleteCallable;
+import com.example.myapplication.R;
+import com.example.myapplication.external.TaiwaneseRecognitionService;
+import com.example.myapplication.soundrecording.SoundRecorderFactory;
+import com.example.myapplication.soundrecording.WaitingSoundRecordingDialog;
 
 import java.io.File;
 import java.io.IOException;
@@ -119,13 +126,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
+        //start QueryResultActivity
         queryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(hasNetWork()){
                     String songToSend =song.getText().toString();
-                    String  singerToSend =singer.getText().toString();
+                    String singerToSend =singer.getText().toString();
 
                     if(!songToSend.equals("") || !singerToSend.equals("")){
                         Intent intent=new Intent();
@@ -133,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                         Bundle bundle=new Bundle();
                         bundle.putString("singer", singerToSend);
                         bundle.putString("song", songToSend);
-                        bundle.putInt("nowlang", languageMode.ordinal());
+                        bundle.putInt("languageMode", languageMode.ordinal());
                         intent.putExtras(bundle);
                         startActivity(intent);
                     }
@@ -212,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             //show waiting dialog for end recording
-            Dialog waitingTaiwaneseRecognitionDialog =new WaitingTaiwaneseRecognitionDialog(this);
+            Dialog waitingTaiwaneseRecognitionDialog =new WaitingSoundRecordingDialog(this);
             waitingTaiwaneseRecognitionDialog.setOnCancelListener(new Dialog.OnCancelListener(){
                 @Override
                 public void onCancel(DialogInterface dialog)
@@ -233,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
         loadingProgressDialog.show();
         TaiwaneseRecognitionService taiwaneseRecognitionService=new TaiwaneseRecognitionService(new OnCompleteCallable() {
             @Override
-            public void call(String msg, boolean success) {
+            public void doOnComplete(String msg, boolean success) {
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -254,7 +261,6 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean hasNetWork(){
         ConnectivityManager mConnectivityManager=(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        assert mConnectivityManager!=null;
         NetworkInfo mNetWorkInfo =mConnectivityManager.getActiveNetworkInfo();
         if(mNetWorkInfo!=null&&mNetWorkInfo.isConnected())return true;
         else

@@ -16,9 +16,9 @@
         android:roundIcon="@mipmap/karaoke_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".YoutubePlayerActivity" android:screenOrientation="portrait"></activity>
-        <activity android:name=".QueryResultActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".MainActivity" android:screenOrientation="portrait">
+        <activity android:name=".activity.YoutubePlayerActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".activity.QueryResultActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".activity.MainActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

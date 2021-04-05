@@ -1,13 +1,20 @@
-package com.example.myapplication;
+package com.example.myapplication.ka;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ *  manage and store all data from query result of KaService
+ */
 public class KaResponse {
     private String rawResponse;
     private String status;
     private KaSongs songs;
 
+    /**
+     * @param rawResponse the json string from KaService result
+     * @throws JSONException
+     */
     public KaResponse(String rawResponse) throws JSONException {
         this.rawResponse = rawResponse;
 

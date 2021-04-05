@@ -1,8 +1,10 @@
-package com.example.myapplication;
+package com.example.myapplication.external;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.example.myapplication.util.OnCompleteCallable;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -15,6 +17,9 @@ import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * the original code is from the optional class in 2019 and the author is unknown
+ */
 // 台語語音辨識
 @SuppressLint("StaticFieldLeak")
 public class TaiwaneseRecognitionService extends AsyncTask<String, Void, Boolean> {
@@ -110,13 +115,13 @@ public class TaiwaneseRecognitionService extends AsyncTask<String, Void, Boolean
             if (match.find()) {
                 if (match.group(2).contains("same with ori")) {
                     // `result` same as `ori`
-                    onCompleteCallable.call(match.group(1)
+                    onCompleteCallable.doOnComplete(match.group(1)
                                     .replace(" ", "")
                                     .replace("\n", "")
                                     .replace("�", "")
                             , true);
                 } else {
-                    onCompleteCallable.call(match.group(2)
+                    onCompleteCallable.doOnComplete(match.group(2)
                                     .replace(" ", "")
                                     .replace("\n", "")
                                     .replace("�", "")
@@ -124,11 +129,11 @@ public class TaiwaneseRecognitionService extends AsyncTask<String, Void, Boolean
                 }
             } else {
                 // match failed
-                onCompleteCallable.call("辨識失敗", false);
+                onCompleteCallable.doOnComplete("辨識失敗", false);
             }
         } else {
             // print error message send by server
-            onCompleteCallable.call(message, false);
+            onCompleteCallable.doOnComplete(message, false);
         }
     }
 

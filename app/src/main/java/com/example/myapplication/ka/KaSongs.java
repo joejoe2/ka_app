@@ -1,10 +1,13 @@
-package com.example.myapplication;
+package com.example.myapplication.ka;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
 
+/**
+ * manage and store songs data from query result of KaService
+ */
 public class KaSongs {
     private JSONArray allSongs;
     private ArrayList<String> validSongs;
@@ -15,11 +18,17 @@ public class KaSongs {
     private static final int LINK_FIELD=2;
     private static final int NO_USE_FIELD=3;
 
+    /**
+     * @param allSongs 'content' field from KaService result
+     */
     public KaSongs(JSONArray allSongs){
         this.allSongs=allSongs;
         filterWithValidSongs();
     }
 
+    /**
+     * filter allSongs with valid format(containing non NULL link) and add into validSongs and songLinks
+     */
     private void filterWithValidSongs(){
         validSongs=new ArrayList<>();
         songLinks=new ArrayList<>();

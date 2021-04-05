@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.soundrecording;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -10,10 +10,15 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.myapplication.R;
+
 import androidx.annotation.NonNull;
 
-public class WaitingTaiwaneseRecognitionDialog extends Dialog {
-    public WaitingTaiwaneseRecognitionDialog(@NonNull Context context) {
+/**
+ * specific dialog for waiting sound recording finish
+ */
+public class WaitingSoundRecordingDialog extends Dialog {
+    public WaitingSoundRecordingDialog(@NonNull Context context) {
         super(context);
         setContentView(R.layout.dialog_recording);
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

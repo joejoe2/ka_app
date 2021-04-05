@@ -1,6 +1,8 @@
-package com.example.myapplication;
+package com.example.myapplication.ka;
 
 import android.os.AsyncTask;
+
+import com.example.myapplication.util.OnCompleteCallable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,6 +11,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * Async send query request to KaService server and invoke the OnCompleteCallable when task done
+ */
 public class KaService extends AsyncTask <Void, Void, Boolean>{
     private String server;
     private String singer;
@@ -25,6 +30,11 @@ public class KaService extends AsyncTask <Void, Void, Boolean>{
         this.onCompleteCallable = onCompleteCallable;
     }
 
+    /**
+     * send the request in background thread
+     * @param voids
+     * @return only when connection error will return false
+     */
     @Override
     protected Boolean doInBackground(Void... voids) {
         try {
@@ -37,18 +47,28 @@ public class KaService extends AsyncTask <Void, Void, Boolean>{
         }
     }
 
-    private String InputStreamToString(InputStream is) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+    /**
+     * read all lines of inputStream and convert into string
+     * @param inputStream
+     * @return
+     * @throws IOException
+     */
+    private String InputStreamToString(InputStream inputStream) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder sb = new StringBuilder();
         String line;
         while ((line = br.readLine()) != null) {
             sb.append(line);
         }
         br.close();
-        is.close();
+        inputStream.close();
         return sb.toString();
     }
 
+    /**
+     * build the request url by singer, song, mode and server
+     * @return the request url which can be sent directly to server
+     */
     private String getRequestUrl(){
         if(singer.equals("")){
             return server+"/search_song?song="+song+"&mode="+mode;
@@ -62,6 +82,6 @@ public class KaService extends AsyncTask <Void, Void, Boolean>{
 
     @Override
     protected void onPostExecute(Boolean success) {
-        onCompleteCallable.call(result, success);
+        onCompleteCallable.doOnComplete(result, success);
     }
 }
