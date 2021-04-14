@@ -4,9 +4,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.example.myapplication.R;
+import com.example.myapplication.util.ToastLogger;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
@@ -65,7 +65,7 @@ public class YoutubePlayerActivity extends YouTubeBaseActivity{
 
             @Override
             public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-                Toast.makeText(getApplicationContext(),"Video Loading Failed",Toast.LENGTH_SHORT).show();
+                ToastLogger.logOnActivity(YoutubePlayerActivity.this, "Video Loading Failed");
             }
         });
     }

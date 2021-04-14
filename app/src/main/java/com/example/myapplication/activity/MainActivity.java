@@ -1,8 +1,5 @@
 package com.example.myapplication.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -21,19 +18,22 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.example.myapplication.util.Language;
-import com.example.myapplication.util.OnCompleteCallable;
 import com.example.myapplication.R;
 import com.example.myapplication.external.TaiwaneseRecognitionService;
 import com.example.myapplication.soundrecording.SoundRecorderFactory;
 import com.example.myapplication.soundrecording.WaitingSoundRecordingDialog;
+import com.example.myapplication.util.Language;
+import com.example.myapplication.util.OnCompleteCallable;
+import com.example.myapplication.util.ToastLogger;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 public class MainActivity extends AppCompatActivity {
     //ui
@@ -79,8 +79,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkPermission(){
-        int permission1 = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        int permission2 =ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
+        int permission1 = ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int permission2 =ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO);
         if(permission1!= PackageManager.PERMISSION_GRANTED||permission2!=PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO},1);
         }
@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                     else {
-                        Toast.makeText(getApplicationContext(),"輸入歌手或歌名",Toast.LENGTH_SHORT).show();
+                        ToastLogger.logOnActivity(MainActivity.this, "輸入歌手或歌名");
                     }
                 }
             }
@@ -169,22 +169,22 @@ public class MainActivity extends AppCompatActivity {
         if(hasNetWork()){
             //use google ChineseRecognition service
             Intent intent=new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.TAIWAN.toString());
             intent.putExtra(RecognizerIntent.EXTRA_PROMPT,"say something");
             try {
-                startActivityForResult(intent,REQ_CODE_SPEECH_INPUT);
+                startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
             }
             catch (ActivityNotFoundException e)
             {
-                Toast.makeText(getApplicationContext(),"本裝置不支援語音辨識",Toast.LENGTH_SHORT).show();
+                ToastLogger.logOnActivity(MainActivity.this, "本裝置不支援語音辨識");
             }
         }
     }
 
     @Override
-    protected void onActivityResult(int requestCode,int resultCode,Intent data){
-        super.onActivityResult(requestCode,resultCode,data);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode,data);
         //on receive ChineseRecognition result
         switch (requestCode){
             case REQ_CODE_SPEECH_INPUT:
@@ -215,8 +215,7 @@ public class MainActivity extends AppCompatActivity {
             }
             catch (IOException e)
             {
-                Toast.makeText(getApplicationContext(),"辨識失敗",Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
+                ToastLogger.logOnActivity(MainActivity.this, "辨識失敗");
             }
             //show waiting dialog for end recording
             Dialog waitingTaiwaneseRecognitionDialog =new WaitingSoundRecordingDialog(this);
@@ -250,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
                             if(isInputForSinger) singer.setText(res);
                             else song.setText(res);
                         } else {
-                            Toast.makeText(getApplicationContext(),"辨識失敗",Toast.LENGTH_SHORT).show();
+                            ToastLogger.logOnActivity(MainActivity.this, "辨識失敗");
                         }
                     }
                 });
@@ -265,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
         if(mNetWorkInfo!=null&&mNetWorkInfo.isConnected())return true;
         else
         {
-            Toast.makeText(this,"無網路連線",Toast.LENGTH_SHORT).show();
+            ToastLogger.logOnActivity(MainActivity.this, "無網路連線");
             return false;
         }
     }
