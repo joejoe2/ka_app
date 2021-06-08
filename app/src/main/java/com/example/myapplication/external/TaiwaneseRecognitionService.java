@@ -108,25 +108,26 @@ public class TaiwaneseRecognitionService extends AsyncTask<String, Void, Boolean
     protected void onPostExecute(Boolean success) {
         super.onPostExecute(success);
 
-        Log.i(TAG, "onPostExecute: message: " + message);
+        System.out.println("onPostExecute: message: " + message);
 
         if (success) {
             Matcher match = Pattern.compile("ori:(.*)result:(.*)").matcher(message);
             if (match.find()) {
+                String matchResult;
                 if (match.group(2).contains("same with ori")) {
                     // `result` same as `ori`
-                    onCompleteCallable.doOnComplete(match.group(1)
-                                    .replace(" ", "")
-                                    .replace("\n", "")
-                                    .replace("�", "")
-                            , true);
+                    matchResult=match.group(1);
                 } else {
-                    onCompleteCallable.doOnComplete(match.group(2)
-                                    .replace(" ", "")
-                                    .replace("\n", "")
-                                    .replace("�", "")
-                            , true);
+                    matchResult=match.group(2);
                 }
+                onCompleteCallable.doOnComplete(matchResult
+                                .replace(" ", "")
+                                .replace("\n", "")
+                                .replace("�", "")
+                                .replace(";", "")
+                                .replace("*", "")
+                                .replaceAll("[a-zA-z*]", "")
+                        , true);
             } else {
                 // match failed
                 onCompleteCallable.doOnComplete("辨識失敗", false);
