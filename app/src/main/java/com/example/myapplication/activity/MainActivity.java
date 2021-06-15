@@ -209,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
             //start recording
             try {
                 recordFile=File.createTempFile("record_temp",".m4a", getCacheDir());
+                recordFile.deleteOnExit();
                 soundRecorder = SoundRecorderFactory.generate(recordFile);
                 soundRecorder.prepare();
                 soundRecorder.start();
@@ -249,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
                             if(isInputForSinger) singer.setText(res);
                             else song.setText(res);
                         } else {
-                            ToastLogger.logOnActivity(MainActivity.this, "辨識失敗");
+                            ToastLogger.logOnActivity(MainActivity.this, msg);
                         }
                     }
                 });

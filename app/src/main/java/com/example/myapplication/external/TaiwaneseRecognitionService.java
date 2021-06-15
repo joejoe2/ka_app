@@ -28,7 +28,7 @@ public class TaiwaneseRecognitionService extends AsyncTask<String, Void, Boolean
      * param[1]: the target model
      * */
     // 伺服器核發之安全性token
-    private static final String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzUxMiJ9.eyJpZCI6NzgsInVzZXJfaWQiOiIwIiwic2VydmljZV9pZCI6IjMiLCJzY29wZXMiOiI5OTk5OTk5OTkiLCJzdWIiOiIiLCJpYXQiOjE1NDEwNjUwNzEsIm5iZiI6MTU0MTA2NTA3MSwiZXhwIjoxNjk4NzQ1MDcxLCJpc3MiOiJKV1QiLCJhdWQiOiJ3bW1rcy5jc2llLmVkdS50dyIsInZlciI6MC4xfQ.K4bNyZ0vlT8lpU4Vm9YhvDbjrfu_xuPx8ygoKsmovRxCCUbj4OBX4PzYLZxeyVF-Bvdi2-wphGVEjz8PsU6YGRSh5SDUoHjjukFesUr8itMmGfZr4BsmEf9bheDm65zzbmbk7EBA9pn1TRimRmNG3XsfuDZvceg6_k6vMWfhQBA";
+    private static final String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzUxMiJ9.eyJ1c2VyX2lkIjoiOTYiLCJuYmYiOjE2MjM3NDU2NTYsInNjb3BlcyI6IjAiLCJhdWQiOiJ3bW1rcy5jc2llLmVkdS50dyIsImlzcyI6IkpXVCIsInZlciI6MC4xLCJpYXQiOjE2MjM3NDU2NTYsInN1YiI6IiIsImV4cCI6MTYzOTI5NzY1NiwiaWQiOjM3MSwic2VydmljZV9pZCI6IjMifQ.rA7jKWhy_ZPNirgxkDH5kIXlBupHdhMhw2QteNc7j-qkEbP06dgwCBtS4REjuBu1D_FrwSA_UPkOm8jxEgbn7ZbQZKeFtd3eUC8bIEBEduw5XnOFYLjKRGkk9WwFyRyGCsuQJnTTL8ZLtUVasyo6utiOJ4F3eAosKh3Fgmu5r3E";
 
     // 伺服器資訊
     private static final String host = "140.116.245.149";
